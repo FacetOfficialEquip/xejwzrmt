@@ -17,8 +17,12 @@ function readJson(file, fallback) {
 }
 
 function writeJson(file, data) {
-  fs.writeFileSync(file, JSON.stringify(data, null, 2));
+  const tmp = `${file}.tmp`;
+  fs.writeFileSync(tmp, JSON.stringify(data, null, 2));
+  fs.renameSync(tmp, file);
 }
+
+const MAX_BODY = 16 * 1024;
 
 function send(res, status, body, type = 'application/json') {
   res.writeHead(status, { 'Content-Type': `${type}; charset=utf-8` });
@@ -28,7 +32,13 @@ function send(res, status, body, type = 'application/json') {
 function readBody(req) {
   return new Promise((resolve, reject) => {
     let data = '';
-    req.on('data', (c) => (data += c));
+    req.on('data', (c) => {
+      data += c;
+      if (data.length > MAX_BODY) {
+        req.destroy();
+        reject(new Error('body too large'));
+      }
+    });
     req.on('end', () => {
       try {
         resolve(data ? JSON.parse(data) : {});
@@ -44,10 +54,10 @@ const MIME = { '.html': 'text/html', '.js': 'text/javascript', '.css': 'text/css
 const server = http.createServer(async (req, res) => {
   const url = new URL(req.url, `http://${req.headers.host}`);
   const students = readJson(STUDENTS_FILE, []);
-  const scores = readJson(SCORES_FILE, []);
 
   // GET /api/students?grade=5
   if (url.pathname === '/api/students' && req.method === 'GET') {
+    const scores = readJson(SCORES_FILE, []);
     const grade = Number(url.searchParams.get('grade'));
     const list = students
       .filter((s) => !grade || s.grade === grade)
@@ -68,7 +78,10 @@ const server = http.createServer(async (req, res) => {
     if (student.account !== String(body.account || '').trim()) {
       return send(res, 403, { error: '账号不匹配，请输入你自己的账号' });
     }
-    const score = Number(body.score);
+    const score =
+      body.score == null || (typeof body.score === 'string' && body.score.trim() === '')
+        ? NaN
+        : Number(body.score);
     if (!Number.isFinite(score) || score < 0 || score > 1000) {
       return send(res, 400, { error: '得分必须是 0-1000 之间的数字' });
     }
@@ -80,6 +93,7 @@ const server = http.createServer(async (req, res) => {
       note: String(body.note || '').trim().slice(0, 200),
       createdAt: new Date().toISOString(),
     };
+    const scores = readJson(SCORES_FILE, []);
     scores.push(record);
     writeJson(SCORES_FILE, scores);
     return send(res, 201, record);
@@ -94,6 +108,7 @@ const server = http.createServer(async (req, res) => {
     } catch {
       return send(res, 400, { error: '无效的请求数据' });
     }
+    const scores = readJson(SCORES_FILE, []);
     const idx = scores.findIndex((r) => r.id === del[1]);
     if (idx < 0) return send(res, 404, { error: '记录不存在' });
     const student = students.find((s) => s.id === scores[idx].studentId);

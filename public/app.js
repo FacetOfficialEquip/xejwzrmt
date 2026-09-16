@@ -12,6 +12,16 @@ function esc(s) {
   return String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 }
 
+async function request(url, options, fallback) {
+  try {
+    const res = await fetch(url, options);
+    const body = await res.json().catch(() => ({}));
+    return res.ok ? { ok: true } : { ok: false, error: body.error || body.detail || fallback };
+  } catch {
+    return { ok: false, error: fallback };
+  }
+}
+
 async function load() {
   const res = await fetch(`/api/students?grade=${grade}`);
   students = await res.json();
@@ -85,14 +95,17 @@ form.addEventListener('submit', async (e) => {
   e.preventDefault();
   formError.textContent = '';
   const data = Object.fromEntries(new FormData(form));
-  const res = await fetch('/api/scores', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ ...data, studentId: current.id }),
-  });
-  const body = await res.json();
-  if (!res.ok) {
-    formError.textContent = body.error || body.detail || '保存失败';
+  const result = await request(
+    '/api/scores',
+    {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ ...data, studentId: current.id }),
+    },
+    '保存失败'
+  );
+  if (!result.ok) {
+    formError.textContent = result.error;
     return;
   }
   form.score.value = '';
@@ -110,14 +123,17 @@ history.addEventListener('click', async (e) => {
     return;
   }
   if (!confirm('确定删除这条记录？')) return;
-  const res = await fetch(`/api/scores/${id}`, {
-    method: 'DELETE',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ account }),
-  });
-  const body = await res.json();
-  if (!res.ok) {
-    formError.textContent = body.error || body.detail || '删除失败';
+  const result = await request(
+    `/api/scores/${id}`,
+    {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ account }),
+    },
+    '删除失败'
+  );
+  if (!result.ok) {
+    formError.textContent = result.error;
     return;
   }
   await load();

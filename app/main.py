@@ -1,6 +1,7 @@
 import json
 import os
 import secrets
+import threading
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -16,6 +17,7 @@ SCORES_FILE = DATA_DIR / "scores.json"
 PUBLIC_DIR = BASE_DIR / "public"
 
 app = FastAPI()
+scores_lock = threading.Lock()
 
 
 def read_json(path: Path, fallback):
@@ -27,7 +29,9 @@ def read_json(path: Path, fallback):
 
 def write_scores(scores):
     DATA_DIR.mkdir(parents=True, exist_ok=True)
-    SCORES_FILE.write_text(json.dumps(scores, ensure_ascii=False, indent=2), "utf-8")
+    tmp = SCORES_FILE.with_suffix(".json.tmp")
+    tmp.write_text(json.dumps(scores, ensure_ascii=False, indent=2), "utf-8")
+    os.replace(tmp, SCORES_FILE)
 
 
 class ScoreIn(BaseModel):
@@ -71,24 +75,26 @@ def add_score(body: ScoreIn):
         "note": body.note.strip()[:200],
         "createdAt": datetime.now(timezone.utc).isoformat(),
     }
-    scores = read_json(SCORES_FILE, [])
-    scores.append(record)
-    write_scores(scores)
+    with scores_lock:
+        scores = read_json(SCORES_FILE, [])
+        scores.append(record)
+        write_scores(scores)
     return record
 
 
 @app.delete("/api/scores/{record_id}")
 def delete_score(record_id: str, body: AccountIn):
     students = read_json(STUDENTS_FILE, [])
-    scores = read_json(SCORES_FILE, [])
-    idx = next((i for i, r in enumerate(scores) if r["id"] == record_id), None)
-    if idx is None:
-        raise HTTPException(404, "记录不存在")
-    student = next((s for s in students if s["id"] == scores[idx]["studentId"]), None)
-    if not student or student["account"] != body.account.strip():
-        raise HTTPException(403, "账号不匹配")
-    scores.pop(idx)
-    write_scores(scores)
+    with scores_lock:
+        scores = read_json(SCORES_FILE, [])
+        idx = next((i for i, r in enumerate(scores) if r["id"] == record_id), None)
+        if idx is None:
+            raise HTTPException(404, "记录不存在")
+        student = next((s for s in students if s["id"] == scores[idx]["studentId"]), None)
+        if not student or student["account"] != body.account.strip():
+            raise HTTPException(403, "账号不匹配")
+        scores.pop(idx)
+        write_scores(scores)
     return {"ok": True}
 
 
