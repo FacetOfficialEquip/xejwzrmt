@@ -1,0 +1,15 @@
+[tool.poetry]
+name = "student-score-system"
+version = "1.0.0"
+description = "Student score recording system"
+authors = ["devin"]
+packages = [{include = "app"}]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+fastapi = "^0.115.0"
+uvicorn = {extras = ["standard"], version = "^0.30.0"}
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
