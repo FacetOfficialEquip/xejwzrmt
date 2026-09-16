@@ -1,0 +1,35 @@
+* { box-sizing: border-box; }
+body { margin: 0; font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif; background: #f5f6fa; color: #222; }
+header { background: #fff; padding: 16px 24px; display: flex; gap: 16px; align-items: center; flex-wrap: wrap; box-shadow: 0 1px 4px rgba(0,0,0,.08); }
+header h1 { margin: 0; font-size: 20px; flex: 1; }
+header .back { color: #3b6cf5; text-decoration: none; }
+header input { padding: 8px 12px; border: 1px solid #ccc; border-radius: 6px; min-width: 220px; }
+main { padding: 24px; max-width: 1000px; margin: 0 auto; }
+table { width: 100%; border-collapse: collapse; background: #fff; border-radius: 8px; overflow: hidden; box-shadow: 0 1px 4px rgba(0,0,0,.08); }
+th, td { padding: 10px 12px; text-align: left; border-bottom: 1px solid #eee; }
+th { background: #f0f2f8; font-weight: 600; }
+tr:hover td { background: #fafbff; }
+code { background: #eef1f8; padding: 2px 6px; border-radius: 4px; }
+small { color: #888; }
+button { background: #3b6cf5; color: #fff; border: 0; padding: 6px 12px; border-radius: 6px; cursor: pointer; }
+button:hover { background: #2f58c9; }
+button#cancel { background: #999; }
+.home { text-align: center; padding-top: 80px; }
+.grade-links { display: flex; gap: 24px; justify-content: center; margin-top: 24px; }
+.grade-card { display: block; padding: 40px 60px; background: #fff; border-radius: 12px; font-size: 24px; text-decoration: none; color: #3b6cf5; box-shadow: 0 2px 8px rgba(0,0,0,.1); }
+.grade-card:hover { transform: translateY(-2px); }
+.modal { position: fixed; inset: 0; background: rgba(0,0,0,.4); display: flex; align-items: center; justify-content: center; padding: 16px; }
+.modal.hidden { display: none; }
+.modal-box { background: #fff; border-radius: 12px; padding: 24px; width: 100%; max-width: 520px; max-height: 90vh; overflow: auto; }
+.modal-box h2 { margin-top: 0; }
+.hint { color: #666; font-size: 14px; }
+form label { display: block; margin-bottom: 12px; font-size: 14px; }
+form input { display: block; width: 100%; padding: 8px 10px; margin-top: 4px; border: 1px solid #ccc; border-radius: 6px; }
+.actions { display: flex; gap: 12px; justify-content: flex-end; }
+.error { color: #d33; font-size: 14px; min-height: 18px; margin: 4px 0; }
+#history { list-style: none; padding: 0; margin: 0; }
+#history li { display: grid; grid-template-columns: 1fr auto auto 1fr auto; gap: 10px; align-items: center; padding: 8px 0; border-bottom: 1px solid #eee; font-size: 14px; }
+#history li.empty { display: block; color: #999; }
+#history .del { background: transparent; color: #999; padding: 0 6px; font-size: 18px; }
+#history .del:hover { color: #d33; }
+@media (max-width: 600px) { th:nth-child(1), td:nth-child(1) { display: none; } main { padding: 12px; } }

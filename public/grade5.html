@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>五年级 - 学生得分记录</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body data-grade="5">
+  <header>
+    <a href="/" class="back">← 返回首页</a>
+    <h1>五年级学生名单</h1>
+    <input id="search" type="search" placeholder="搜索姓名 / 班级 / 账号">
+  </header>
+  <main>
+    <table id="table">
+      <thead>
+        <tr><th>序号</th><th>姓名</th><th>班级</th><th>账号</th><th>最新得分</th><th>累计得分</th><th>操作</th></tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </main>
+
+  <div id="modal" class="modal hidden">
+    <div class="modal-box">
+      <h2 id="modal-title"></h2>
+      <p class="hint">请输入你的账号以验证身份，然后填写得分。</p>
+      <form id="score-form">
+        <label>账号 <input name="account" required autocomplete="off"></label>
+        <label>项目/科目 <input name="subject" placeholder="例如：数学、口算、视频" autocomplete="off"></label>
+        <label>得分 <input name="score" type="number" min="0" max="1000" step="0.5" required></label>
+        <label>备注 <input name="note" autocomplete="off"></label>
+        <p id="form-error" class="error"></p>
+        <div class="actions">
+          <button type="button" id="cancel">取消</button>
+          <button type="submit">保存得分</button>
+        </div>
+      </form>
+      <h3>历史记录</h3>
+      <ul id="history"></ul>
+    </div>
+  </div>
+  <script src="/app.js"></script>
+</body>
+</html>
