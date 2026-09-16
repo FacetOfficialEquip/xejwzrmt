@@ -2,13 +2,13 @@ services:
   - type: web
     name: student-score-system
     runtime: docker
-    # starter 套餐（约 $7/月）才支持持久磁盘；如只想免费试用，把 plan 改为 free 并删除 disk 段
-    #（免费版每次休眠/重启后得分记录会丢失）
-    plan: starter
-    envVars:
-      - key: DATA_DIR
-        value: /data
-    disk:
-      name: data
-      mountPath: /data
-      sizeGB: 1
+    # free 套餐不支持持久磁盘，服务休眠/重启后得分记录会丢失。
+    # 需要永久保存得分时改为 plan: starter（约 $7/月）并加上：
+    #   envVars:
+    #     - key: DATA_DIR
+    #       value: /data
+    #   disk:
+    #     name: data
+    #     mountPath: /data
+    #     sizeGB: 1
+    plan: free
