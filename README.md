@@ -13,8 +13,8 @@
 3. Render 会自动读取 `render.yaml`，点击 **Apply** 即可。
 4. 等待 2–3 分钟，部署完成后会得到一个类似 `https://student-score-system.onrender.com` 的地址，把它发给学生即可。
 
-`render.yaml` 默认使用 Starter 套餐（约 $7/月）并挂载 1GB 持久磁盘到 `/data`，得分记录不会丢失。
-如果只想免费试用：把 `render.yaml` 中的 `plan: starter` 改成 `plan: free` 并删掉 `disk:` 段，但免费版每次休眠 / 重启后得分记录会清空。
+`render.yaml` 默认使用免费套餐（free）：无需信用卡，但服务闲置约 15 分钟后会休眠，首次访问需等待几十秒唤醒，且休眠 / 重启后得分记录会清空。
+如需永久保存得分：按 `render.yaml` 中的注释改为 `plan: starter`（约 $7/月）并挂载 1GB 持久磁盘到 `/data`。
 
 ## 部署到 Railway
 
