@@ -92,7 +92,7 @@ form.addEventListener('submit', async (e) => {
   });
   const body = await res.json();
   if (!res.ok) {
-    formError.textContent = body.error || '保存失败';
+    formError.textContent = body.error || body.detail || '保存失败';
     return;
   }
   form.score.value = '';
@@ -103,6 +103,7 @@ form.addEventListener('submit', async (e) => {
 history.addEventListener('click', async (e) => {
   const id = e.target.dataset.id;
   if (!id) return;
+  formError.textContent = '';
   const account = form.account.value.trim();
   if (!account) {
     formError.textContent = '删除前请先在上方输入账号';
@@ -116,7 +117,7 @@ history.addEventListener('click', async (e) => {
   });
   const body = await res.json();
   if (!res.ok) {
-    formError.textContent = body.error || '删除失败';
+    formError.textContent = body.error || body.detail || '删除失败';
     return;
   }
   await load();
