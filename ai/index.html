@@ -149,7 +149,7 @@ async function startCam(){
     video.classList.toggle('mirror',facing==='user');
     camOK=true;$('camMsg').style.display='none';testImg=null;
   }catch(e){
-    $('camMsg').innerHTML='摄像头没有打开 😢<br>请在浏览器弹窗中点“允许”使用摄像头，<br>或用每一类的“📁上传”按钮选择照片。';
+    $('camMsg').innerHTML='摄像头没有打开 😢<br>请在浏览器弹窗中点“允许”使用摄像头，<br>或点每一类的“📷 拍照/相册”按钮拍照。';
   }
 }
 function thumbOf(src){
@@ -169,7 +169,7 @@ function renderClasses(){
       <span class="count">已拍 <b>0</b> 张</span>
       ${classes.length>2?'<button class="del">删除</button>':''}</div>
       <div class="row"><button class="hold primary" style="background:${COLORS[i]}">📸 按住拍照</button>
-      <button class="up">📁 上传</button><input type="file" accept="image/*" multiple></div>
+      <button class="up">📷 拍照/相册</button><input type="file" accept="image/*" multiple></div>
       <div class="thumbs"></div>`;
     d.querySelector('input').oninput=ev=>{c.name=ev.target.value||('第'+(i+1)+'类');renderBars();};
     const hb=d.querySelector('.hold');let timer=null;
